@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pokémon Bank - Cajero Automático</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="navbar navbar-dark bg-primary p-3 shadow">
+<h3 class="text-white m-0"><i class="fas fa-piggy-bank"></i> Pokémon Bank</h3>
+<div class="text-white" id="saldoHeader">Saldo: $0.00</div>
+</header>
+
+
+<div class="d-flex">
+<aside class="sidebar bg-light p-3 border-right">
+<ul class="nav flex-column">
+<li class="nav-item"><a href="#" class="nav-link" id="btnDeposito"><i class="fas fa-plus-circle"></i> Depósito</a></li>
+<li class="nav-item"><a href="#" class="nav-link" id="btnRetiro"><i class="fas fa-minus-circle"></i> Retiro</a></li>
+<li class="nav-item"><a href="#" class="nav-link" id="btnPago"><i class="fas fa-receipt"></i> Pago</a></li>
+<li class="nav-item"><a href="#" class="nav-link" id="btnHistorial"><i class="fas fa-list"></i> Historial</a></li>
+<li class="nav-item"><a href="#" class="nav-link" id="btnGrafico"><i class="fas fa-chart-bar"></i> Gráfico</a></li>
+<li class="nav-item"><a href="#" class="nav-link" id="btnPDF"><i class="fas fa-file-pdf"></i> Comprobante</a></li>
+<li class="nav-item"><a href="#" class="nav-link text-danger" id="btnSalir"><i class="fas fa-sign-out-alt"></i> Salir</a></li>
+</ul>
+</aside>
+
+
+<main class="p-4 flex-grow-1" id="mainContent">
+<section id="loginSection">
+<div class="card p-4 shadow w-50 mx-auto mt-5">
+<h4 class="text-center mb-3">Inicio de sesión</h4>
+<p class="text-muted text-center">Ingrese su PIN de 4 dígitos para acceder</p>
+<input type="password" id="inputPIN" maxlength="4" class="form-control mb-3 text-center" placeholder="****">
+<button class="btn btn-primary btn-block" id="btnLogin">Ingresar</button>
+<div id="loginMsg" class="text-danger text-center mt-3 d-none">PIN incorrecto</div>
+</div>
+</section>
+
+
+<section id="dashboardSection" class="d-none">
+<h4 id="userName">Titular: Ash Ketchum</h4>
+<p id="userAccount">Cuenta: 0987654321</p>
+
+
+<div id="acciones" class="mt-4">
+<h5>Seleccione una acción desde el menú lateral</h5>
+</div>
+
+
+<div id="graficoSection" class="mt-5 d-none">
+<canvas id="chartTransacciones"></canvas>
+</div>
+
+
+<div id="historialSection" class="mt-5 d-none">
+<h5>Historial de transacciones</h5>
+<table class="table table-striped">
+<thead class="thead-dark">
+<tr><th>Fecha</th><th>Tipo</th><th>Detalle</th><th>Monto</th></tr>
+</thead>
+<tbody id="tablaHistorial"></tbody>
+</table>
+</div>
+</section>
+</main>
+</div>
+
+
+<footer class="bg-dark text-white text-center py-2">
+<small>Proyecto educativo - Pokémon Bank © 2025</small>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

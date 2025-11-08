@@ -1,0 +1,48 @@
+body {
+  background-color: #f4f6f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header {
+  background-color: #1b3b6f !important;
+}
+
+.sidebar {
+  width: 220px;
+  min-height: calc(100vh - 56px);
+}
+
+.sidebar .nav-link {
+  color: #1b3b6f;
+  font-weight: 500;
+  border-radius: 8px;
+  margin: 5px 0;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  background-color: #f6c31c;
+  color: #fff;
+}
+
+#mainContent {
+  min-height: calc(100vh - 56px);
+  background-color: #fff;
+}
+
+.card {
+  border-radius: 12px;
+}
+
+#chartTransacciones {
+  max-width: 600px;
+  margin: auto;
+}
+
+table th, table td {
+  vertical-align: middle !important;
+}
+
+footer {
+  background-color: #1b3b6f;
+}
