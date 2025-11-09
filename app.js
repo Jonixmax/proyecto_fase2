@@ -46,10 +46,12 @@ function fillAcciones(msg='Seleccione una acción desde el menú lateral') {
 function showLogin() {
   $('#loginSection').classList.remove('d-none');
   $('#dashboardSection').classList.add('d-none');
+  $('.sidebar').classList.add('d-none'); // Ocultar el panel lateral al cerrar sesión
 }
 function showDashboard() {
   $('#loginSection').classList.add('d-none');
   $('#dashboardSection').classList.remove('d-none');
+  $('.sidebar').classList.remove('d-none'); // Mostrar el panel lateral al iniciar sesión
   renderUser();
   renderHeader();
   hideSections();
