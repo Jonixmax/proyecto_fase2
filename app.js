@@ -56,10 +56,10 @@ function showDashboard() {
   $('#saldoHeader').classList.remove('d-none');
   renderUser();
   renderHeader();
-  hideSections();
+  
   fillAcciones();
   renderChart(); // prepara instancia del gráfico
-
+  hideSections();
 }
 
 $('#btnLogin')?.addEventListener('click', (e) => {
