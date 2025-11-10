@@ -54,41 +54,35 @@
             <section id="dashboardSection" class="d-none">
 
                 <div class="profile-header d-flex align-items-center mb-4">
-
                     <img src="imagenes/perfilash.jpg" alt="Foto de perfil" class="profile-pic mr-3">
-
                     <div>
                         <h4 id="userName" class="mb-0">Titular: Ash Ketchum</h4>
                         <p id="userAccount" class="text-muted mb-0">Cuenta: 0987654321</p>
                     </div>
-
                 </div>
+
                 <div id="acciones" class="mt-4">
+                    <h5>Seleccione una acción desde el menú lateral</h5>
+                </div>
+                <div id="graficoSection" class="mt-5 d-none">
+                    <canvas id="chartTransacciones"></canvas>
+                </div>
 
-                    <div id="acciones" class="mt-4">
-                        <h5>Seleccione una acción desde el menú lateral</h5>
-                    </div>
+                <div id="historialSection" class="mt-5 d-none">
+                    <h5>Historial de transacciones</h5>
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Detalle</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaHistorial"></tbody>
+                    </table>
+                </div>
 
-
-                    <div id="graficoSection" class="mt-5 d-none">
-                        <canvas id="chartTransacciones"></canvas>
-                    </div>
-
-
-                    <div id="historialSection" class="mt-5 d-none">
-                        <h5>Historial de transacciones</h5>
-                        <table class="table table-striped">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
-                                    <th>Detalle</th>
-                                    <th>Monto</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaHistorial"></tbody>
-                        </table>
-                    </div>
             </section>
         </main>
     </div>
