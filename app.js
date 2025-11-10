@@ -3,16 +3,16 @@
 */
 
 // --------------------- Utils ---------------------
-const $  = (s) => document.querySelector(s);
+const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
-const money = (n) => `$${(Number(n)||0).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2})}`;
+const money = (n) => `$${(Number(n) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 // --------------------- Estado ---------------------
 const STORAGE_KEY = 'pkbank_v2_state';
 const SESSION_KEY = 'pkbank_v2_logged';
 
 const defaultState = {
-  user:  { name: 'Ash Ketchum', account: '0987654321', pin: '1234' },
+  user: { name: 'Ash Ketchum', account: '0987654321', pin: '1234' },
   balance: 500.00,
   moves: [], // {date, type: 'Depósito'|'Retiro'|'Pago', detail, amount} (amount signed)
   counts: { deposit: 0, withdraw: 0, payment: 0 } // para gráfico (cantidad por tipo)
@@ -35,10 +35,10 @@ function renderHeader() {
   $('#saldoHeader').textContent = `Saldo: ${money(state.balance)}`;
 }
 function renderUser() {
-  $('#userName').textContent    = `Titular: ${state.user.name}`;
+  $('#userName').textContent = `Titular: ${state.user.name}`;
   $('#userAccount').textContent = `Cuenta: ${state.user.account}`;
 }
-function fillAcciones(msg='Seleccione una acción desde el menú lateral') {
+function fillAcciones(msg = 'Seleccione una acción desde el menú lateral') {
   $('#acciones').innerHTML = `<h5 class="text-muted">${msg}</h5>`;
 }
 
@@ -47,16 +47,19 @@ function showLogin() {
   $('#loginSection').classList.remove('d-none');
   $('#dashboardSection').classList.add('d-none');
   $('.sidebar').classList.add('d-none'); // Ocultar el panel lateral al cerrar sesión
+  $('#saldoHeader').classList.add('d-none');
 }
 function showDashboard() {
   $('#loginSection').classList.add('d-none');
   $('#dashboardSection').classList.remove('d-none');
   $('.sidebar').classList.remove('d-none'); // Mostrar el panel lateral al iniciar sesión
+  $('#saldoHeader').classList.remove('d-none');
   renderUser();
   renderHeader();
   hideSections();
   fillAcciones();
   renderChart(); // prepara instancia del gráfico
+
 }
 
 $('#btnLogin')?.addEventListener('click', (e) => {
@@ -72,18 +75,46 @@ $('#btnLogin')?.addEventListener('click', (e) => {
   };
   const errors = validate({ pin }, constraints);
   if (errors) {
-    Swal.fire({ icon:'error', title:'PIN inválido', text: errors.pin?.[0] || 'Verifica tu PIN.' });
+    Swal.fire({
+
+      title: 'PIN inválido',
+      text: errors.pin?.[0] || 'Verifica tu PIN.',
+
+      // --- Añadimos la imagen ---
+      imageUrl: 'imagenes/metapod.jpg',
+      imageWidth: 150,
+      imageHeight: 150,
+      imageAlt: 'Error de datos', customClass: 'swal-pokemon-img'
+
+    });
     return;
   }
 
   if (pin !== state.user.pin) {
-    Swal.fire({ icon:'error', title:'PIN incorrecto', text:'Vuelve a intentarlo.' });
+    Swal.fire({
+
+      title: 'PIN incorrecto',
+      text: 'Vuelve a intentarlo.',
+      imageUrl: 'imagenes/Psyduck.jpg',
+      imageWidth: 150,
+      imageHeight: 150,
+      imageAlt: 'Imagen de error', customClass: 'swal-pokemon-img'
+    });
     return;
   }
 
   sessionStorage.setItem(SESSION_KEY, '1');
-  Swal.fire({ icon:'success', title:'Bienvenido', timer: 1000, showConfirmButton:false })
-      .then(showDashboard);
+  Swal.fire({
+
+    title: 'Bienvenido',
+    timer: 1000,
+    showConfirmButton: false,
+    imageUrl: 'imagenes/pikachu.gif',
+    imageWidth: 150,
+    imageHeight: 150,
+    imageAlt: 'bienvenido', customClass: 'swal-pokemon-img'
+  })
+    .then(showDashboard);
 });
 
 // Si estaba logueado en esta sesión, entra directo
@@ -97,10 +128,16 @@ $('#btnSalir')?.addEventListener('click', () => {
   Swal.fire({
     title: '¿Salir?',
     text: 'Se cerrará la sesión actual.',
-    icon: 'question',
+
     showCancelButton: true,
     confirmButtonText: 'Sí, salir',
-    cancelButtonText: 'Cancelar'
+    cancelButtonText: 'Cancelar',
+
+    imageUrl: 'imagenes/cry.gif',
+    imageWidth: 150,
+    imageHeight: 150,
+    imageAlt: 'Pikachu triste', customClass: 'swal-pokemon-img'
+
   }).then(r => {
     if (r.isConfirmed) {
       sessionStorage.removeItem(SESSION_KEY);
@@ -152,11 +189,11 @@ function addMove(type, detail, signedAmount) {
   });
   // contador por tipo
   if (type === 'Depósito') state.counts.deposit++;
-  if (type === 'Retiro')   state.counts.withdraw++;
-  if (type === 'Pago')     state.counts.payment++;
+  if (type === 'Retiro') state.counts.withdraw++;
+  if (type === 'Pago') state.counts.payment++;
 }
 
-function deposit(amount, detail='Depósito') {
+function deposit(amount, detail = 'Depósito') {
   state.balance += amount;
   addMove('Depósito', detail, +amount);
   saveState();
@@ -165,9 +202,9 @@ function deposit(amount, detail='Depósito') {
   updateChartCounts();
 }
 
-function withdraw(amount, detail='Retiro') {
+function withdraw(amount, detail = 'Retiro') {
   if (amount > state.balance) {
-    Swal.fire({ icon:'error', title:'Saldo insuficiente', text:'No puedes retirar más del saldo disponible.' });
+    Swal.fire({ icon: 'error', title: 'Saldo insuficiente', text: 'No puedes retirar más del saldo disponible.' });
     return false;
   }
   state.balance -= amount;
@@ -181,7 +218,7 @@ function withdraw(amount, detail='Retiro') {
 
 function pay(service, amount) {
   if (amount > state.balance) {
-    Swal.fire({ icon:'error', title:'Saldo insuficiente', text:'No puedes pagar un monto mayor a tu saldo.' });
+    Swal.fire({ icon: 'error', title: 'Saldo insuficiente', text: 'No puedes pagar un monto mayor a tu saldo.' });
     return false;
   }
   state.balance -= amount;
@@ -206,7 +243,7 @@ function renderHistorial() {
       <td>${m.date}</td>
       <td>${m.type}</td>
       <td>${m.detail || '-'}</td>
-      <td class="${m.amount<0?'text-danger':'text-success'}">${money(m.amount)}</td>
+      <td class="${m.amount < 0 ? 'text-danger' : 'text-success'}">${money(m.amount)}</td>
     </tr>
   `).join('');
 }
@@ -250,39 +287,39 @@ function updateChartCounts() {
 function generarPDF() {
   const { jsPDF } = window.jspdf || {};
   if (!jsPDF) {
-    Swal.fire({ icon:'error', title:'PDF no disponible', text:'No se pudo cargar jsPDF.' });
+    Swal.fire({ icon: 'error', title: 'PDF no disponible', text: 'No se pudo cargar jsPDF.' });
     return;
   }
   if (!state.moves.length) {
-    Swal.fire({ icon:'info', title:'Sin movimientos', text:'Realiza una transacción para generar comprobante.' });
+    Swal.fire({ icon: 'info', title: 'Sin movimientos', text: 'Realiza una transacción para generar comprobante.' });
     return;
   }
 
   // último movimiento
   const m = state.moves[0];
-  const doc = new jsPDF({ unit:'pt', format:'a4' });
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
   const margin = 50;
   let y = margin;
 
-  doc.setFont('helvetica','bold'); doc.setFontSize(16);
-  doc.text('Pokémon Bank - Comprobante de Transacción', margin, y); y+=24;
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
+  doc.text('Pokémon Bank - Comprobante de Transacción', margin, y); y += 24;
 
-  doc.setFont('helvetica','normal'); doc.setFontSize(11);
-  doc.text(`Titular: ${state.user.name}`, margin, y); y+=16;
-  doc.text(`Cuenta: ${state.user.account}`, margin, y); y+=16;
-  doc.text(`Fecha:  ${m.date}`, margin, y); y+=24;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+  doc.text(`Titular: ${state.user.name}`, margin, y); y += 16;
+  doc.text(`Cuenta: ${state.user.account}`, margin, y); y += 16;
+  doc.text(`Fecha:  ${m.date}`, margin, y); y += 24;
 
-  doc.setFont('helvetica','bold');
-  doc.text('Detalle de la operación', margin, y); y+=14;
-  doc.setLineWidth(0.5); doc.line(margin, y, 545, y); y+=12;
+  doc.setFont('helvetica', 'bold');
+  doc.text('Detalle de la operación', margin, y); y += 14;
+  doc.setLineWidth(0.5); doc.line(margin, y, 545, y); y += 12;
 
-  doc.setFont('helvetica','normal');
-  doc.text(`Tipo:    ${m.type}`, margin, y); y+=16;
-  doc.text(`Detalle: ${m.detail || '-'}`, margin, y); y+=16;
-  doc.text(`Monto:   ${money(m.amount)}`, margin, y); y+=16;
-  doc.text(`Saldo actual: ${money(state.balance)}`, margin, y); y+=24;
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Tipo:    ${m.type}`, margin, y); y += 16;
+  doc.text(`Detalle: ${m.detail || '-'}`, margin, y); y += 16;
+  doc.text(`Monto:   ${money(m.amount)}`, margin, y); y += 16;
+  doc.text(`Saldo actual: ${money(state.balance)}`, margin, y); y += 24;
 
-  doc.setFont('helvetica','italic'); doc.setFontSize(10);
+  doc.setFont('helvetica', 'italic'); doc.setFontSize(10);
   doc.text('Este comprobante es parte de un proyecto académico (versión de prueba).', margin, y);
 
   const fname = `Comprobante_${m.type}_${Date.now()}.pdf`;
@@ -315,14 +352,14 @@ function renderFormDeposito() {
 
     const errors = validate({ depMonto }, {
       depMonto: {
-        presence: { allowEmpty:false, message: '^Ingresa un monto.' },
+        presence: { allowEmpty: false, message: '^Ingresa un monto.' },
         numericality: { greaterThan: 0, message: '^El monto debe ser mayor que 0.' }
       }
     });
-    if (errors) { Swal.fire({ icon:'error', title:'Datos inválidos', text: errors.depMonto[0] }); return; }
+    if (errors) { Swal.fire({ icon: 'error', title: 'Datos inválidos', text: errors.depMonto[0] }); return; }
 
     deposit(depMonto, depDetalle || 'Depósito');
-    Swal.fire({ icon:'success', title:'Depósito registrado', timer: 1200, showConfirmButton:false });
+    Swal.fire({ icon: 'success', title: 'Depósito registrado', timer: 1200, showConfirmButton: false });
   });
 }
 
@@ -351,14 +388,14 @@ function renderFormRetiro() {
 
     const errors = validate({ retMonto }, {
       retMonto: {
-        presence: { allowEmpty:false, message: '^Ingresa un monto.' },
+        presence: { allowEmpty: false, message: '^Ingresa un monto.' },
         numericality: { greaterThan: 0, message: '^El monto debe ser mayor que 0.' }
       }
     });
-    if (errors) { Swal.fire({ icon:'error', title:'Datos inválidos', text: errors.retMonto[0] }); return; }
+    if (errors) { Swal.fire({ icon: 'error', title: 'Datos inválidos', text: errors.retMonto[0] }); return; }
 
     if (withdraw(retMonto, retDetalle || 'Retiro')) {
-      Swal.fire({ icon:'success', title:'Retiro realizado', timer: 1200, showConfirmButton:false });
+      Swal.fire({ icon: 'success', title: 'Retiro realizado', timer: 1200, showConfirmButton: false });
     }
   });
 }
@@ -394,14 +431,14 @@ function renderFormPago() {
 
     const errors = validate({ pagMonto }, {
       pagMonto: {
-        presence: { allowEmpty:false, message: '^Ingresa un monto.' },
+        presence: { allowEmpty: false, message: '^Ingresa un monto.' },
         numericality: { greaterThan: 0, message: '^El monto debe ser mayor que 0.' }
       }
     });
-    if (errors) { Swal.fire({ icon:'error', title:'Datos inválidos', text: errors.pagMonto[0] }); return; }
+    if (errors) { Swal.fire({ icon: 'error', title: 'Datos inválidos', text: errors.pagMonto[0] }); return; }
 
     if (pay(servicio, pagMonto)) {
-      Swal.fire({ icon:'success', title:`Pago de ${servicio} registrado`, timer: 1300, showConfirmButton:false });
+      Swal.fire({ icon: 'success', title: `Pago de ${servicio} registrado`, timer: 1300, showConfirmButton: false });
     }
   });
 }

@@ -39,10 +39,31 @@ header {
   margin: auto;
 }
 
-table th, table td {
+table th,
+table td {
   vertical-align: middle !important;
 }
 
 footer {
   background-color: #1b3b6f;
+}
+
+.profile-pic {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #f6c31c;
+}
+
+
+#dashboardSection #userName {
+  font-size: 1.4rem;
+}
+
+
+.swal-pokemon-img .swal2-image {
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #f6c31c;
 }
