@@ -256,30 +256,77 @@ function getCounts() {
   return [deposit, withdraw, payment];
 }
 
+// Devuelve la suma total de dinero (valores positivos) por tipo
+function getSums() {
+  let deposit = 0, withdraw = 0, payment = 0;
+  for (const m of state.moves) {
+    if (m.type === 'Depósito') deposit += Number(m.amount) || 0;
+    if (m.type === 'Retiro') withdraw += Math.abs(Number(m.amount) || 0);
+    if (m.type === 'Pago') payment += Math.abs(Number(m.amount) || 0);
+  }
+  return [deposit, withdraw, payment];
+}
+
 function renderChart() {
   const ctx = $('#chartTransacciones')?.getContext('2d');
   if (!ctx || typeof Chart === 'undefined') return;
+
+  // Si el plugin de datalabels está cargado, registrarlo (para mostrar valores encima de las barras)
+  if (typeof ChartDataLabels !== 'undefined') {
+    try { Chart.register(ChartDataLabels); } catch (e) { /* ya registrado o no compatible */ }
+  }
+
   const data = getCounts();
+  const sums = getSums();
   if (chartRef) { chartRef.destroy(); }
 
   chartRef = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: ['Depósitos', 'Retiros', 'Pagos'],
-      datasets: [{ label: 'Cantidad de transacciones', data, borderWidth: 1 }]
+      datasets: [{
+        label: 'Cantidad de transacciones',
+        data,
+        borderWidth: 1,
+        backgroundColor: ['#4caf50', '#f44336', '#ff9800'],
+        // Adjuntamos las sumas al dataset para que el formatter de datalabels pueda acceder a ellas
+        sums
+      }]
     },
     options: {
       responsive: true,
+      // permitir que el canvas use la altura del contenedor
+      maintainAspectRatio: false,
       scales: { y: { beginAtZero: true, precision: 0 } },
-      plugins: { legend: { display: false } }
-    }
+      plugins: {
+        legend: { display: false },
+        // Configuración para mostrar los números exactos encima de cada barra
+        datalabels: {
+          anchor: 'end',
+          align: 'end',
+          // Mostrar cantidad y, debajo (o al lado), el total de dinero formateado
+          formatter: (value, ctx) => {
+            const idx = ctx.dataIndex;
+            const total = (ctx.dataset && ctx.dataset.sums) ? ctx.dataset.sums[idx] : 0;
+            return `${value} | ${money(total)}`;
+          },
+          color: '#000',
+          font: { weight: 'bold', size: 12 }
+        }
+      }
+    },
+    // Añadir plugin explícitamente si está disponible
+    plugins: (typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : []
   });
 }
 
 function updateChartCounts() {
   if (!chartRef) { renderChart(); return; }
   const data = getCounts();
+  const sums = getSums();
   chartRef.data.datasets[0].data = data;
+  // actualizar también las sumas en el dataset
+  chartRef.data.datasets[0].sums = sums;
   chartRef.update();
 }
 
